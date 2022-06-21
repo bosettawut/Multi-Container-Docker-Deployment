@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: p1-backend
+  labels:
+    app: p1-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: p1-backend
+  template:
+    metadata:
+      labels:
+        app: p1-backend
+    spec:
+      containers:
+        - name: p1-backend
+          image: ghcr.io/cs-muic/scalable-p1-settawutboss/scalable-p1:latest
+          imagePullPolicy: Always
+          env:
+            - name: UMS_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key:  user
+
+            - name: UMS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: password
+
+            - name: UMS_DB_IP
+              value: mariadb.default.svc
+            - name: UMS_DB_PORT
+              value: "3306"
+            - name: UMS_DB_NAME
+              value: scalable_p1
+            - name: SERVER_PORT
+              value: "8080"
+      imagePullSecrets:
+        - name: myregistrykey
